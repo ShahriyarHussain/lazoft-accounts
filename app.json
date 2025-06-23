@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "lazoft-photos",
-    "slug": "lazoft-photos",
+    "name": "lazoft-accounts",
+    "slug": "lazoft-accounts",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "lazoftphotos",
+    "scheme": "lazoftaccounts",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
