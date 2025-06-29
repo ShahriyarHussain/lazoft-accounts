@@ -1,10 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const TransactionStorage = {
-    // Save a new transaction
-    async saveTransaction(transaction) {
+    async saveTransaction(transaction: {id: string; title: string; amount: string; type: string; date: string; category: string; paymentMethod : string  }) {
         try {
-            // Generate unique ID using timestamp
             const id = Date.now().toString();
             const transactionWithId = {
                 ...transaction,
@@ -12,15 +10,10 @@ export const TransactionStorage = {
                 createdAt: new Date().toISOString()
             };
 
-            // Get existing transactions
             const existingTransactions = await this.getTransactions();
-
-            // Add new transaction to beginning of array (most recent first)
             const updatedTransactions = [transactionWithId, ...existingTransactions];
 
-            // Save to storage
             await AsyncStorage.setItem('transactions', JSON.stringify(updatedTransactions));
-
             return transactionWithId;
         } catch (error) {
             console.error('Error saving transaction:', error);
@@ -28,7 +21,6 @@ export const TransactionStorage = {
         }
     },
 
-    // Get all transactions
     async getTransactions() {
         try {
             const transactions = await AsyncStorage.getItem('transactions');
@@ -39,11 +31,10 @@ export const TransactionStorage = {
         }
     },
 
-    // Delete a transaction
-    async deleteTransaction(id) {
+    async deleteTransaction(id : string) {
         try {
             const transactions = await this.getTransactions();
-            const filteredTransactions = transactions.filter(t => t.id !== id);
+            const filteredTransactions = transactions.filter((t: { id: string; }) => t.id !== id);
             await AsyncStorage.setItem('transactions', JSON.stringify(filteredTransactions));
             return true;
         } catch (error) {
@@ -52,24 +43,22 @@ export const TransactionStorage = {
         }
     },
 
-    // Get transactions by type
-    async getTransactionsByType(type) {
+    async getTransactionsByType(type : any) {
         try {
             const transactions = await this.getTransactions();
-            return transactions.filter(t => t.type === type);
+            return transactions.filter((t: { type: any; }) => t.type === type);
         } catch (error) {
             console.error('Error filtering transactions:', error);
             return [];
         }
     },
 
-    // Get total balance
     async getTotalBalance() {
         try {
             const transactions = await this.getTransactions();
             let balance = 0;
 
-            transactions.forEach(transaction => {
+            transactions.forEach((transaction: {id: string; amount: string; type: string; }) => {
                 const amount = parseFloat(transaction.amount);
                 if (transaction.type === 'income') {
                     balance += amount;
