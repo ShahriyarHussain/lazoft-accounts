@@ -72,5 +72,16 @@ export const TransactionStorage = {
             console.error('Error calculating balance:', error);
             return 0;
         }
+    },
+
+    async deleteAllTransactions () {
+        try {
+            await AsyncStorage.removeItem('transactions');
+            console.log('All Transactions deleted');
+            return true;
+        } catch (error) {
+            console.error('Failed to delete transactions:', error);
+            return false;
+        }
     }
 };

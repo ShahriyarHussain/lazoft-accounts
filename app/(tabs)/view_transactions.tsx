@@ -1,9 +1,18 @@
-import {ActivityIndicator, SafeAreaView, StyleSheet, View, FlatList, Text, Animated, TouchableOpacity} from 'react-native'
-import React, {useEffect, useState} from 'react'
+import {
+    ActivityIndicator,
+    SafeAreaView,
+    StyleSheet,
+    View,
+    FlatList,
+    Text,
+    Animated,
+    TouchableOpacity
+} from 'react-native'
+import React, {useEffect, useState, useRef, useCallback} from 'react'
 import PageTitle from "@/app/components/page_title";
 import TransactionCard from "@/app/components/transaction_card";
 import {TransactionStorage} from "@/app/helper/TransactionStorage";
-import { useRef } from 'react';
+import {useFocusEffect} from "@react-navigation/native";
 
 
 const ViewTransactions = () => {
@@ -29,27 +38,29 @@ const ViewTransactions = () => {
     const [loading, setLoading] = useState(true);
     const [filterRange, setFilterRange] = useState(1);
 
-    const renderTransaction = ({item}: any) => (
+    const renderTransaction = ({item}: { item: any }) => (
         <TransactionCard
+            id={item.id}
             amount={item.amount}
             date={item.date}
             title={item.title}
             type={item.type}
-        />
-    );
-    useEffect(() => {
-        const fetchTransactions = async () => {
-            try {
-                const data = await TransactionStorage.getTransactions();
-                setTransactions(data);
-            } catch (error) {
-                console.error('Error fetching transactions:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchTransactions().then();
-    }, []);
+        />);
+
+    useFocusEffect(
+        useCallback(() => {
+            const fetchTransactions = async () => {
+                try {
+                    const data = await TransactionStorage.getTransactions();
+                    setTransactions(data);
+                } catch (error) {
+                    console.error('Error fetching transactions:', error);
+                } finally {
+                    setLoading(false);
+                }
+            };
+            fetchTransactions().then();
+        }, []));
 
     const scaleAnim = useRef(new Animated.Value(1)).current;
     const animateTap = () => {
@@ -105,13 +116,13 @@ const ViewTransactions = () => {
             <View className="flex-1 p-4">
                 <PageTitle title="View Transactions"/>
                 <View className="flex flex-row justify-end">
-                <Animated.Text
-                    onPress={animateTap}
-                    style={{ transform: [{ scale: scaleAnim }] }}
-                    className="text-blue-600 font-semibold text-base mb-2"
-                >
-                    {filterRange === 1 ? 'This Month' : (filterRange === 0 ? 'All' : filterRange + ' Months')}
-                </Animated.Text>
+                    <Animated.Text
+                        onPress={animateTap}
+                        style={{transform: [{scale: scaleAnim}]}}
+                        className="text-blue-600 font-semibold text-base mb-2"
+                    >
+                        {filterRange === 1 ? 'This Month' : (filterRange === 0 ? 'All' : filterRange + ' Months')}
+                    </Animated.Text>
                 </View>
                 <FlatList
                     data={filteredTransactions}
@@ -121,9 +132,10 @@ const ViewTransactions = () => {
                     }
                     showsVerticalScrollIndicator={false}
                     ListFooterComponent={
-                        <Text className={`font-bold text-2xl mt-4 ${transactionSum >= 0 ? 'text-green-800' : 'text-red-600' }`}
+                        <Text
+                            className={`font-bold text-2xl mt-4 ${transactionSum >= 0 ? 'text-green-800' : 'text-red-600'}`}
                         >
-                            {"Total: " + transactionSum}
+                            {filteredTransactions.length > 0 ? ("Sub-Total: " + transactionSum) : ""}
                         </Text>
                     }
                 />

@@ -1,7 +1,7 @@
 import {Tabs} from "expo-router";
 import "../global.css";
 import {icons} from "@/constants/icons";
-import {Image, ImageBackground, Text, View} from "react-native";
+import {Image, View} from "react-native";
 
 const NavIcon = ({focused, icon} : any) => {
     if (focused) {
@@ -80,14 +80,14 @@ export default function TabLayout() {
                         <NavIcon focused={focused} icon={icons.list}/>
                     )
                 }}/>
-            <Tabs.Screen
-                name="manage_accounts"
-                options={{
-                    headerShown: false,
-                    tabBarIcon: ({focused}) => (
-                        <NavIcon focused={focused} icon={icons.accounts}/>
-                    )
-                }}/>
+            {/*<Tabs.Screen*/}
+            {/*    name="manage_accounts"*/}
+            {/*    options={{*/}
+            {/*        headerShown: false,*/}
+            {/*        tabBarIcon: ({focused}) => (*/}
+            {/*            <NavIcon focused={focused} icon={icons.accounts}/>*/}
+            {/*        )*/}
+            {/*    }}/>*/}
             <Tabs.Screen
                 name="settings"
                 options={{

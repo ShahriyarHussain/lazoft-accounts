@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {View, Text, TextInput, TouchableOpacity, ScrollView, Alert, SafeAreaView} from 'react-native';
-import {TransactionStorage} from '@/app/helper/TransactionStorage'; // Adjust path as needed
+import {TransactionStorage} from '@/app/helper/TransactionStorage';
+import PageTitle from "@/app/components/page_title"; // Adjust path as needed
 
 const TransactionForm = () => {
     const [formData, setFormData] = useState({
@@ -116,53 +117,42 @@ const TransactionForm = () => {
     };
 
     const renderDropdown = (options: any[], selectedValue: string, onSelect: {
-        (value: any): void;
-        (value: any): void;
+        (value: string): void;
+        (value: string): void;
         (arg0: any): void;
-    }, placeholder: string, showDropdown: boolean, setShowDropdown: {
-        (value: React.SetStateAction<boolean>): void;
-        (value: React.SetStateAction<boolean>): void; (arg0: boolean): void;
-    }) => {
+    }, placeholder: string) => {
         return (
-            <View className="relative mb-4">
-                <TouchableOpacity onPress={() => setShowDropdown(!showDropdown)}
-                                  className="border border-gray-300 rounded-lg px-4 py-3 flex-row justify-between items-center">
-                    <Text className={selectedValue ? 'text-gray-800' : 'text-gray-400'}>
-                        {selectedValue || placeholder}
-                    </Text>
-                    <Text className="text-gray-400 text-lg">
-                        {showDropdown ? '▲' : '▼'}
-                    </Text>
-                </TouchableOpacity>
-
-                {showDropdown && (
-                    <View
-                        className="absolute top-14 left-0 right-0 bg-white border border-gray-300 rounded-lg shadow-lg z-10 max-h-48">
-                        <ScrollView>
-                            {options.map((option) => (
-                                <TouchableOpacity
-                                    key={option}
-                                    onPress={() => {
-                                        onSelect(option);
-                                        setShowDropdown(false);
-                                    }}
-                                    className="px-4 py-3 border-b border-gray-100"
-                                >
-                                    <Text className="text-gray-800">{option}</Text>
-                                </TouchableOpacity>
-                            ))}
-                        </ScrollView>
-                    </View>
-                )}
+            <View className="mb-4">
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
+                    {options.map((option) => (
+                        <TouchableOpacity
+                            key={option}
+                            onPress={() => onSelect(option)}
+                            className={`mr-2 px-4 py-2 rounded-lg border ${
+                                selectedValue === option
+                                    ? 'bg-cyan-950 border-cyan-950'
+                                    : 'bg-gray-100 border-gray-300'
+                            }`}
+                        >
+                            <Text className={`${
+                                selectedValue === option ? 'text-white' : 'text-gray-700'
+                            }`}>
+                                {option}
+                            </Text>
+                        </TouchableOpacity>
+                    ))}
+                </ScrollView>
             </View>
         );
     };
 
     return (
         <SafeAreaView className="flex-1 bg-white">
-            <ScrollView className="flex-1 p-4" contentContainerStyle={{paddingBottom: 40}}>
-                <Text className="text-2xl font-bold text-gray-800 mb-6">Add Transaction</Text>
+            <View className="p-4">
+                <PageTitle title="Add Transactions"/>
+            </View>
 
+            <ScrollView className="flex-1 p-4" contentContainerStyle={{paddingBottom: 40}}>
                 <View className="mb-4">
                     <Text className="text-gray-700 font-medium mb-2">Transaction Title</Text>
                     <TextInput
@@ -212,10 +202,8 @@ const TransactionForm = () => {
                     {renderDropdown(
                         formData.type === 'expense' ? expenseCategories : incomeCategories,
                         formData.category,
-                        (value) => handleInputChange('category', value),
-                        'Select category',
-                        showCategoryDropdown,
-                        setShowCategoryDropdown
+                        (value: string) => handleInputChange('category', value),
+                        'Select category'
                     )}
                 </View>
 
@@ -225,9 +213,7 @@ const TransactionForm = () => {
                         paymentMethods,
                         formData.paymentMethod,
                         (value) => handleInputChange('paymentMethod', value),
-                        'Select payment method',
-                        showPaymentDropdown,
-                        setShowPaymentDropdown
+                        'Select payment method'
                     )}
                 </View>
 
